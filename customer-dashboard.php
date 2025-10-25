@@ -21,6 +21,7 @@ $applications = $conn->query($apps_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Business Permit System</title>
+    <link rel="icon" type="image/svg+xml" href="briefcase.svg">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -153,117 +154,70 @@ $applications = $conn->query($apps_query);
 
                 <!-- Step 2: Document Upload -->
                 <div class="form-step" id="form-step-2">
-                    <h4>Step 2: Upload Required Documents</h4>
+                    <h4>Step 2: Required Documents</h4>
                     
                     <p style="color: var(--text-muted); margin-bottom: 20px;">
-                        Please upload all required documents. All fields are mandatory.
+                        The following documents are required for your application:
                     </p>
+                    
                     <div class="document-item">
                         <label>1. Application Form</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc1" name="doc1" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc1" class="file-label">Choose File</label>
-                            <span class="file-status" id="status1"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>2. Certificate of Registration</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc2" name="doc2" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc2" class="file-label">Choose File</label>
-                            <span class="file-status" id="status2"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>3. Barangay Business Clearance</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc3" name="doc3" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc3" class="file-label">Choose File</label>
-                            <span class="file-status" id="status3"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>4. Community Tax Certificate (CTC)</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc4" name="doc4" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc4" class="file-label">Choose File</label>
-                            <span class="file-status" id="status4"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>5. Contract of Lease / Title</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc5" name="doc5" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc5" class="file-label">Choose File</label>
-                            <span class="file-status" id="status5"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>6. Sketch/Pictures of Business Location</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc6" name="doc6" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc6" class="file-label">Choose File</label>
-                            <span class="file-status" id="status6"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(Image File)</span>
                     </div>
 
                     <div class="document-item">
                         <label>7. Public Liability Insurance</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc7" name="doc7" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc7" class="file-label">Choose File</label>
-                            <span class="file-status" id="status7"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>8. Locational/Zoning Clearance</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc8" name="doc8" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc8" class="file-label">Choose File</label>
-                            <span class="file-status" id="status8"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>9. Certificate of Occupancy</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc9" name="doc9" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc9" class="file-label">Choose File</label>
-                            <span class="file-status" id="status9"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>10. Building Permit & Electrical Cert.</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc10" name="doc10" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc10" class="file-label">Choose File</label>
-                            <span class="file-status" id="status10"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>11. Sanitary Permit</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc11" name="doc11" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc11" class="file-label">Choose File</label>
-                            <span class="file-status" id="status11"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
                         <label>12. Fire Safety Inspection Permit</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="doc12" name="doc12" accept="image/png, image/jpeg" required onchange="updateFileName(this)">
-                            <label for="doc12" class="file-label">Choose File</label>
-                            <span class="file-status" id="status12"></span>
-                        </div>
+                        <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="form-navigation">

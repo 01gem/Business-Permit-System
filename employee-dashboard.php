@@ -35,6 +35,7 @@ $stats = $stats_result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Dashboard - Business Permit System</title>
+    <link rel="icon" type="image/svg+xml" href="briefcase.svg">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -134,7 +135,26 @@ $stats = $stats_result->fetch_assoc();
                 <h3>Application Documents</h3>
                 <button class="close-modal" onclick="closeModal('documentModal')">&times;</button>
             </div>
-            <div id="documentList"></div>
+            <div id="documentList" style="padding: 20px;">
+                <!-- Document list will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div id="documentPreviewModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="documentPreviewTitle">Document Preview</h3>
+                <button class="close-modal" onclick="closeModal('documentPreviewModal')">&times;</button>
+            </div>
+            <div style="padding: 40px; text-align: center; background: #f5f5f5; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                <div>
+                    <p style="font-size: 18px; color: #666; margin-bottom: 10px;">📄</p>
+                    <p style="color: #999;">Document preview placeholder</p>
+                    <p style="color: #ccc; font-size: 14px; margin-top: 20px;">(For presentation purposes)</p>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -27,7 +27,7 @@ async function viewDocuments(applicationId) {
 
     if (result.success) {
       const documentList = document.getElementById("documentList");
-      let html = '<div style="display: grid; gap: 15px;">';
+      let html = '<div style="display: grid; gap: 10px;">';
 
       const documentTypes = [
         "Application Form",
@@ -45,31 +45,19 @@ async function viewDocuments(applicationId) {
       ];
 
       if (result.documents.length > 0) {
-        result.documents.forEach((doc, index) => {
+        documentTypes.forEach((docType, index) => {
           html += `
-                        <div class="document-item">
-                            <div>
-                                <strong>${
-                                  documentTypes[index] || doc.document_type
-                                }</strong>
-                                ${
-                                  doc.is_verified
-                                    ? '<span style="color: var(--success); margin-left: 10px;">✓ Verified</span>'
-                                    : ""
-                                }
-                            </div>
-                            <div>
-                                <button class="btn-action btn-view" onclick="window.open('${
-                                  doc.file_path
-                                }', '_blank')">View</button>
-                                ${
-                                  !doc.is_verified
-                                    ? `<button class="btn-action btn-approve" onclick="verifyDocument(${doc.document_id})">Verify</button>`
-                                    : ""
-                                }
-                            </div>
-                        </div>
-                    `;
+            <div class="document-item" style="padding: 15px; background: #f9f9f9; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid #e0e0e0; transition: all 0.2s;" 
+                 onmouseover="this.style.background='#e3f2fd'; this.style.borderColor='#2196F3';" 
+                 onmouseout="this.style.background='#f9f9f9'; this.style.borderColor='#e0e0e0';"
+                 onclick="showDocumentPreview('${docType}')">
+              <div>
+                <strong style="color: #333;">${index + 1}. ${docType}</strong>
+                <span style="color: #4caf50; margin-left: 10px; font-weight: 500;">(PDF Document)</span>
+              </div>
+              <div style="color: #2196F3; font-size: 20px;">→</div>
+            </div>
+          `;
         });
       } else {
         html +=
@@ -86,6 +74,12 @@ async function viewDocuments(applicationId) {
     console.error("Error:", error);
     alert("Failed to load documents");
   }
+}
+
+// Show document preview
+function showDocumentPreview(documentName) {
+  document.getElementById("documentPreviewTitle").textContent = documentName;
+  document.getElementById("documentPreviewModal").classList.add("show");
 }
 
 // Verify a document

@@ -13,10 +13,6 @@ function showApplicationModal() {
   document.getElementById("applicationType").value = "NEW";
   document.getElementById("form-step-1").classList.add("active");
   document.getElementById("form-step-2").classList.remove("active");
-  for (let i = 1; i <= 12; i++) {
-    const statusEl = document.getElementById("status" + i);
-    if (statusEl) statusEl.textContent = "";
-  }
   document.getElementById("applicationModal").classList.add("show");
 }
 
@@ -27,10 +23,6 @@ function showRenewalModal() {
   document.getElementById("applicationType").value = "RENEWAL";
   document.getElementById("form-step-1").classList.add("active");
   document.getElementById("form-step-2").classList.remove("active");
-  for (let i = 1; i <= 12; i++) {
-    const statusEl = document.getElementById("status" + i);
-    if (statusEl) statusEl.textContent = "";
-  }
   document.getElementById("applicationModal").classList.add("show");
 }
 
@@ -67,19 +59,6 @@ document.getElementById("backButton").addEventListener("click", function () {
   document.getElementById("form-step-1").classList.add("active");
 });
 
-// Update file name display
-function updateFileName(input) {
-  const fileStatus = document.getElementById(
-    "status" + input.id.replace("doc", "")
-  );
-  if (input.files.length > 0) {
-    fileStatus.textContent = " " + input.files[0].name;
-    fileStatus.style.color = "var(--success)";
-  } else {
-    fileStatus.textContent = "";
-  }
-}
-
 // Form submission
 document
   .getElementById("applicationForm")
@@ -87,53 +66,52 @@ document
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-    const messageDiv = document.getElementById("formMessage");
     const submitButton = form.querySelector("button[type=submit]");
-    let fileCount = 0;
-    for (let i = 1; i <= 12; i++) {
-      const fileInput = document.getElementById("doc" + i);
-      if (fileInput && fileInput.files.length > 0) fileCount++;
-    }
-    if (fileCount === 0) {
-      showMessage(messageDiv, "Please upload at least one document.", "error");
-      return;
-    }
+
     submitButton.disabled = true;
     submitButton.textContent = "Submitting...";
-    showMessage(
-      messageDiv,
-      "Submitting application with " + fileCount + " document(s)...",
-      "info"
-    );
+
     try {
       const response = await fetch("api/submit-full-application.php", {
         method: "POST",
         body: formData,
       });
-      const result = await response.json();
+
+      // Check if response is OK
+      if (!response.ok) {
+        throw new Error("Server error: " + response.status);
+      }
+
+      // Get response text first to check what we're getting
+      const text = await response.text();
+      console.log("Server response:", text);
+
+      // Try to parse as JSON
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (jsonError) {
+        console.error("JSON parse error:", jsonError);
+        console.error("Response text:", text);
+        throw new Error(
+          "Invalid response from server. Check console for details."
+        );
+      }
+
       if (result.success) {
-        showMessage(
-          messageDiv,
-          result.message || "Application submitted successfully!",
-          "success"
+        // Show success popup
+        alert(
+          "Successfully applied! It will take a few hours to complete your application."
         );
-        setTimeout(() => {
-          closeModal("applicationModal");
-          location.reload();
-        }, 2000);
+        closeModal("applicationModal");
+        location.reload();
       } else {
-        showMessage(
-          messageDiv,
-          result.message || "Failed to submit application",
-          "error"
-        );
+        alert(result.message || "Failed to submit application");
       }
     } catch (error) {
       console.error("Error:", error);
-      showMessage(
-        messageDiv,
-        "An error occurred while submitting the application",
-        "error"
+      alert(
+        "An error occurred while submitting the application: " + error.message
       );
     } finally {
       submitButton.disabled = false;
