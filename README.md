@@ -18,8 +18,8 @@ Quick setup (short)
 -------------------
 1. Clone:
 ```
-git clone https://github.com/01gem/Business-Permit-System-CLAUDE.git
-cd Business-Permit-System-CLAUDE
+git clone https://github.com/01gem/Business-Permit-System.git
+cd Business-Permit-System
 ```
 2. Create DB and import seed SQL if available:
 ```
