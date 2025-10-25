@@ -65,9 +65,6 @@ document
       email: document.getElementById("regEmail").value,
       password: document.getElementById("regPassword").value,
       contact_number: document.getElementById("regContact").value,
-      business_name: document.getElementById("regBusinessName").value,
-      business_address: document.getElementById("regBusinessAddress").value,
-      business_type: document.getElementById("regBusinessType").value,
     };
 
     const messageDiv = document.getElementById("registerMessage");
