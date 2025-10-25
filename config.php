@@ -23,10 +23,4 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Base URL configuration
 define('BASE_URL', 'http://localhost/business_permit_system/');
-
-// Upload directory configuration
-define('UPLOAD_DIR', __DIR__ . '/uploads/');
-if (!file_exists(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0777, true);
-}
 ?>

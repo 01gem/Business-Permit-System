@@ -48,7 +48,7 @@ try {
     $doc_stmt = $conn->prepare("INSERT INTO documents (application_id, document_type, file_path) VALUES (?, ?, ?)");
     
     foreach ($document_types as $doc_type) {
-        $placeholder_path = 'uploads/placeholder_document.pdf';
+        $placeholder_path = 'N/A';
         $doc_stmt->bind_param("iss", $application_id, $doc_type, $placeholder_path);
         $doc_stmt->execute();
     }
