@@ -21,7 +21,7 @@ $applications = $conn->query($apps_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Business Permit System</title>
-    <link rel="icon" type="image/svg+xml" href="briefcase.svg">
+    <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
