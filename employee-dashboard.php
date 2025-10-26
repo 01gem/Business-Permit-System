@@ -158,6 +158,42 @@ $stats = $stats_result->fetch_assoc();
         </div>
     </div>
 
+    <!-- Approve Application Modal -->
+    <div id="approveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Approve Application</h3>
+                <button class="close-modal" onclick="closeModal('approveModal')">&times;</button>
+            </div>
+            <form id="approveForm">
+                <input type="hidden" id="approveApplicationId" name="application_id">
+                
+                <div class="form-group">
+                    <label for="receiptNumber">Receipt Number *</label>
+                    <input type="text" id="receiptNumber" name="receipt_number" required placeholder="Enter receipt number">
+                </div>
+
+                <div class="form-group">
+                    <label for="receiptAmount">Receipt Amount (₱) *</label>
+                    <input type="number" id="receiptAmount" name="receipt_amount" step="0.01" min="0" required placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="receiptFile">Upload Receipt Copy *</label>
+                    <input type="file" id="receiptFile" name="receipt_file" accept="image/*,.pdf" required>
+                    <small style="color: #666; display: block; margin-top: 5px;">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="approvalNotes">Approval Notes (Optional)</label>
+                    <textarea id="approvalNotes" name="approval_notes" rows="3" placeholder="Any additional notes..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Approve Application</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Release Permit Modal -->
     <div id="releaseModal" class="modal">
         <div class="modal-content">

@@ -114,20 +114,45 @@ async function verifyDocument(documentId) {
   }
 }
 
-// Approve application
-async function approveApplication(applicationId) {
-  if (
-    !confirm("Approve this application? Make sure all documents are verified.")
-  )
-    return;
+// Approve application - Opens approval modal
+function approveApplication(applicationId) {
+  document.getElementById("approveApplicationId").value = applicationId;
+  document.getElementById("approveForm").reset();
+  document.getElementById("approveApplicationId").value = applicationId; // Reset clears it, so set it again
+  document.getElementById("approveModal").classList.add("show");
+}
+
+// Handle approve form submission
+document.getElementById("approveForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append(
+    "application_id",
+    document.getElementById("approveApplicationId").value
+  );
+  formData.append(
+    "receipt_number",
+    document.getElementById("receiptNumber").value
+  );
+  formData.append(
+    "receipt_amount",
+    document.getElementById("receiptAmount").value
+  );
+  formData.append(
+    "approval_notes",
+    document.getElementById("approvalNotes").value
+  );
+
+  const receiptFile = document.getElementById("receiptFile").files[0];
+  if (receiptFile) {
+    formData.append("receipt_file", receiptFile);
+  }
 
   try {
     const response = await fetch("api/approve-application.php", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ application_id: applicationId }),
+      body: formData,
     });
 
     const result = await response.json();
@@ -138,6 +163,7 @@ async function approveApplication(applicationId) {
         "Application approved successfully!",
         "success"
       );
+      closeModal("approveModal");
       setTimeout(() => location.reload(), 1500);
     } else {
       alert(result.message || "Failed to approve application");
@@ -146,7 +172,7 @@ async function approveApplication(applicationId) {
     console.error("Error:", error);
     alert("Failed to approve application");
   }
-}
+});
 
 // Request revision
 function requestRevision(applicationId) {
