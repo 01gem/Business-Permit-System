@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 25, 2025 at 02:53 PM
+-- Generation Time: Oct 26, 2025 at 10:27 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -35,12 +35,16 @@ CREATE TABLE IF NOT EXISTS `applications` (
   `business_name` varchar(200) NOT NULL,
   `business_address` text NOT NULL,
   `business_type` varchar(100) NOT NULL,
+  `payment_proof` varchar(255) DEFAULT NULL,
   `status` enum('PENDING','FOR_REVISION','APPROVED','RELEASED') DEFAULT 'PENDING',
   `application_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `approval_date` timestamp NULL DEFAULT NULL,
   `release_date` timestamp NULL DEFAULT NULL,
   `expiration_date` date DEFAULT NULL,
   `permit_number` varchar(50) DEFAULT NULL,
+  `receipt_number` varchar(100) DEFAULT NULL,
+  `receipt_amount` decimal(10,2) DEFAULT NULL,
+  `receipt_file` varchar(255) DEFAULT NULL,
   `reviewed_by` int(11) DEFAULT NULL,
   `remarks` text,
   PRIMARY KEY (`application_id`),
@@ -61,9 +65,6 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `email` varchar(150) NOT NULL,
   `password` varchar(255) NOT NULL,
   `contact_number` varchar(20) DEFAULT NULL,
-  `business_name` varchar(200) DEFAULT NULL,
-  `business_address` text,
-  `business_type` varchar(100) DEFAULT NULL,
   `date_registered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`customer_id`),
   UNIQUE KEY `email` (`email`)
@@ -108,9 +109,13 @@ CREATE TABLE IF NOT EXISTS `employees` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `employees`
+--
+
 INSERT INTO `employees` (`employee_id`, `first_name`, `last_name`, `email`, `password`, `position`, `department`, `date_registered`) VALUES
 (1, 'Admin', 'User', 'admin@lgu.gov.ph', 'admin123', 'Permit Officer', 'Business Permits Division', '2025-10-23 02:06:29');
+
 --
 -- Constraints for dumped tables
 --

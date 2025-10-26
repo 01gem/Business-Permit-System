@@ -99,7 +99,7 @@ $stats = $stats_result->fetch_assoc();
                                         <td><?php echo str_pad($app['application_id'], 6, '0', STR_PAD_LEFT); ?></td>
                                         <td><?php echo htmlspecialchars($app['customer_fname'] . ' ' . $app['customer_lname']); ?></td>
                                         <td><?php echo htmlspecialchars($app['business_name']); ?></td>
-                                        <td><?php echo $app['application_type']; ?></td>
+                                        <td><?php echo htmlspecialchars($app['business_type']); ?></td>
                                         <td>
                                             <span class="status-badge status-<?php echo strtolower($app['status']); ?>">
                                                 <?php echo str_replace('_', ' ', $app['status']); ?></span>
@@ -170,7 +170,12 @@ $stats = $stats_result->fetch_assoc();
                 
                 <div class="form-group">
                     <label for="receiptNumber">Receipt Number *</label>
-                    <input type="text" id="receiptNumber" name="receipt_number" required placeholder="Enter receipt number">
+                    <input type="text" id="receiptNumber" name="receipt_number" required readonly 
+                           style="background: #f5f5f5; cursor: not-allowed;" 
+                           placeholder="Auto-generated">
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Receipt number will be automatically generated
+                    </small>
                 </div>
 
                 <div class="form-group">
@@ -179,9 +184,31 @@ $stats = $stats_result->fetch_assoc();
                 </div>
 
                 <div class="form-group">
-                    <label for="receiptFile">Upload Receipt Copy *</label>
-                    <input type="file" id="receiptFile" name="receipt_file" accept="image/*,.pdf" required>
-                    <small style="color: #666; display: block; margin-top: 5px;">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
+                    <label for="receiptFile">
+                        Upload Receipt Copy * 
+                        <span style="color: #666; font-weight: normal; font-size: 14px;">(Image or PDF)</span>
+                    </label>
+                    <input 
+                        type="file" 
+                        id="receiptFile" 
+                        name="receipt_file" 
+                        accept="image/*,.pdf" 
+                        required 
+                        style="display: none;"
+                        onchange="handleReceiptFileUpload(this)">
+                    <button 
+                        type="button" 
+                        class="btn-secondary" 
+                        onclick="document.getElementById('receiptFile').click()"
+                        style="width: 100%; padding: 12px; margin-top: 5px;">
+                        Choose File
+                    </button>
+                    <div id="receiptFileStatus" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;">
+                        <span id="receiptFileText"></span>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Accepted formats: PDF, JPG, PNG (Max 5MB)
+                    </small>
                 </div>
 
                 <div class="form-group">

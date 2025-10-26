@@ -20,13 +20,55 @@ foreach ($required_fields as $field) {
     }
 }
 
+// 2.5. Validate and handle payment proof upload
+if (!isset($_FILES['payment_proof']) || $_FILES['payment_proof']['error'] !== UPLOAD_ERR_OK) {
+    echo json_encode(['success' => false, 'message' => 'Payment proof is required']);
+    exit;
+}
+
+$payment_proof_path = null;
+$upload_dir = '../uploads/payment_proofs/';
+
+// Create directory if it doesn't exist
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+$file_tmp = $_FILES['payment_proof']['tmp_name'];
+$file_name = $_FILES['payment_proof']['name'];
+$file_size = $_FILES['payment_proof']['size'];
+$file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+// Validate file
+$allowed_extensions = ['jpg', 'jpeg', 'png'];
+if (!in_array($file_ext, $allowed_extensions)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid file format. Only JPG and PNG are allowed']);
+    exit;
+}
+
+if ($file_size > 5242880) { // 5MB limit
+    echo json_encode(['success' => false, 'message' => 'File size exceeds 5MB limit']);
+    exit;
+}
+
+// Generate unique filename
+$new_filename = 'payment_' . $customer_id . '_' . time() . '.' . $file_ext;
+$upload_path = $upload_dir . $new_filename;
+
+if (!move_uploaded_file($file_tmp, $upload_path)) {
+    echo json_encode(['success' => false, 'message' => 'Failed to upload payment proof']);
+    exit;
+}
+
+$payment_proof_path = 'uploads/payment_proofs/' . $new_filename;
+
 // 3. Start a database transaction
 $conn->autocommit(FALSE);
 
 try {
     // 4. Insert application details into the 'applications' table
-    $stmt = $conn->prepare("INSERT INTO applications (customer_id, application_type, business_name, business_address, business_type, status, application_date) VALUES (?, ?, ?, ?, ?, 'PENDING', NOW())");
-    $stmt->bind_param("issss", $customer_id, $_POST['application_type'], $_POST['business_name'], $_POST['business_address'], $_POST['business_type']);
+    $stmt = $conn->prepare("INSERT INTO applications (customer_id, application_type, business_name, business_address, business_type, payment_proof, status, application_date) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', NOW())");
+    $stmt->bind_param("isssss", $customer_id, $_POST['application_type'], $_POST['business_name'], $_POST['business_address'], $_POST['business_type'], $payment_proof_path);
     
     if (!$stmt->execute()) {
         throw new Exception('Failed to create application record: ' . $stmt->error);
@@ -38,6 +80,7 @@ try {
 
     // 6. Create placeholder document records (for presentation purposes)
     $document_types = [
+        'Proof of Payment Transaction', 
         'Application Form', 'Certificate of Registration', 'Barangay Business Clearance', 'Community Tax Certificate', 
         'Contract of Lease / Title', 'Sketch/Pictures of Business Location', 'Public Liability Insurance', 
         'Locational/Zoning Clearance', 'Certificate of Occupancy', 'Building Permit & Electrical Cert.', 
@@ -68,6 +111,12 @@ try {
     // 9. Rollback the transaction on any error
     $conn->rollback();
     $conn->autocommit(TRUE);
+    
+    // Delete uploaded payment proof file if transaction fails
+    if ($payment_proof_path && file_exists('../' . $payment_proof_path)) {
+        unlink('../' . $payment_proof_path);
+    }
+    
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()

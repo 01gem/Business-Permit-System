@@ -38,6 +38,41 @@ window.onclick = function (event) {
   }
 };
 
+// Handle payment proof upload
+function handlePaymentProofUpload(input) {
+  const file = input.files[0];
+  const statusDiv = document.getElementById("paymentProofStatus");
+  const statusText = document.getElementById("paymentProofText");
+
+  if (file) {
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      alert("File size exceeds 5MB limit. Please choose a smaller file.");
+      input.value = "";
+      statusDiv.style.display = "none";
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file type. Please upload a JPG or PNG image.");
+      input.value = "";
+      statusDiv.style.display = "none";
+      return;
+    }
+
+    // Show success message (similar to document placeholder)
+    statusDiv.style.display = "block";
+    statusDiv.style.background = "#e8f5e9";
+    statusDiv.style.border = "1px solid #4caf50";
+    statusText.innerHTML = `✓ <strong>${file.name}</strong> - Payment proof uploaded successfully`;
+    statusText.style.color = "#2e7d32";
+  } else {
+    statusDiv.style.display = "none";
+  }
+}
+
 // Next button handler
 document.getElementById("nextButton").addEventListener("click", function () {
   const businessName = document.getElementById("businessName").value.trim();
@@ -45,10 +80,18 @@ document.getElementById("nextButton").addEventListener("click", function () {
     .getElementById("businessAddress")
     .value.trim();
   const businessType = document.getElementById("businessType").value;
+  const paymentProof = document.getElementById("paymentProof").files[0];
+
   if (!businessName || !businessAddress || !businessType) {
     alert("Please fill out all business details before proceeding.");
     return;
   }
+
+  if (!paymentProof) {
+    alert("Please upload proof of payment before proceeding.");
+    return;
+  }
+
   document.getElementById("form-step-1").classList.remove("active");
   document.getElementById("form-step-2").classList.add("active");
 });
@@ -131,17 +174,38 @@ async function viewApplication(applicationId) {
         String(app.application_id).padStart(6, "0") +
         "\nBusiness Name: " +
         app.business_name +
-        "\nType: " +
-        app.application_type +
+        "\nBusiness Type: " +
+        app.business_type +
         "\nStatus: " +
         app.status.replace("_", " ") +
         "\nDate Applied: " +
         new Date(app.application_date).toLocaleDateString();
+
       if (app.expiration_date)
         details +=
           "\nExpiration: " + new Date(app.expiration_date).toLocaleDateString();
+
       if (app.permit_number) details += "\nPermit Number: " + app.permit_number;
-      if (app.remarks) details += "\nRemarks: " + app.remarks;
+
+      // Show receipt information if application is approved or released
+      if (
+        (app.status === "APPROVED" || app.status === "RELEASED") &&
+        app.receipt_number
+      ) {
+        details += "\n\n--- RECEIPT INFORMATION ---";
+        details += "\nReceipt Number: " + app.receipt_number;
+        if (app.receipt_amount) {
+          details +=
+            "\nAmount Paid: ₱" + parseFloat(app.receipt_amount).toFixed(2);
+        }
+        if (app.receipt_file) {
+          details += "\nReceipt Copy: " + app.receipt_file;
+        }
+        details += "\n(Receipt issued upon approval)";
+      }
+
+      if (app.remarks) details += "\n\nRemarks: " + app.remarks;
+
       alert(details);
     }
   } catch (error) {
@@ -157,4 +221,26 @@ function showMessage(element, message, type) {
   setTimeout(() => {
     element.classList.remove("show");
   }, 5000);
+}
+
+// Download receipt (placeholder - similar to 12 documents)
+function downloadReceipt(applicationId, receiptNumber) {
+  // Placeholder message similar to the document system
+  alert(
+    "📄 Receipt Download\n\n" +
+      "Receipt Number: " +
+      receiptNumber +
+      "\n" +
+      "Application ID: " +
+      String(applicationId).padStart(6, "0") +
+      "\n\n" +
+      "✓ Your official receipt has been generated.\n" +
+      "This is a placeholder for the receipt download feature.\n\n" +
+      "The receipt contains:\n" +
+      "- Receipt number and amount paid\n" +
+      "- Business permit details\n" +
+      "- Official LGU stamp and signature\n\n" +
+      "(For presentation purposes - actual PDF download would be implemented here)"
+  );
+  console.log("Receipt download requested for Application ID:", applicationId);
 }

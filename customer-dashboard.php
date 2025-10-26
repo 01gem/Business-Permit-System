@@ -73,7 +73,7 @@ $applications = $conn->query($apps_query);
                                     <tr>
                                         <td><?php echo str_pad($app['application_id'], 6, '0', STR_PAD_LEFT); ?></td>
                                         <td><?php echo htmlspecialchars($app['business_name']); ?></td>
-                                        <td><?php echo $app['application_type']; ?></td>
+                                        <td><?php echo htmlspecialchars($app['business_type']); ?></td>
                                         <td>
                                             <span class="status-badge status-<?php echo strtolower($app['status']); ?>">
                                                 <?php echo str_replace('_', ' ', $app['status']); ?>
@@ -91,6 +91,9 @@ $applications = $conn->query($apps_query);
                                         </td>
                                         <td>
                                             <button class="btn-action btn-view" onclick="viewApplication(<?php echo $app['application_id']; ?>)">View</button>
+                                            <?php if ($app['status'] === 'RELEASED' && !empty($app['receipt_number'])): ?>
+                                                <button class="btn-action btn-approve" onclick="downloadReceipt(<?php echo $app['application_id']; ?>, '<?php echo htmlspecialchars($app['receipt_number']); ?>')">Download Receipt</button>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -119,7 +122,7 @@ $applications = $conn->query($apps_query);
                 
                 <!-- Step 1: Business Details -->
                 <div class="form-step active" id="form-step-1">
-                    <h4>Step 1: Business Details</h4>
+                    <h4>Step 1: Business Details & Payment</h4>
 
                     <div class="form-group">
                         <label for="businessName">Business Name</label>
@@ -143,8 +146,48 @@ $applications = $conn->query($apps_query);
                             <option value="Retail Store">Retail Store</option>
                             <option value="Sari-sari Store">Sari-sari Store</option>
                             <option value="Carinderia">Carinderia</option>
-                            <option value="Other">Other</option>
                         </select>
+                    </div>
+
+                    <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196F3;">
+                        <h5 style="margin-top: 0; color: #1976D2;">📱 Application Fee Payment</h5>
+                        <p style="color: #555; margin: 10px 0;">Please send the application fee to the following number:</p>
+                        <div style="background: white; padding: 15px; border-radius: 6px; margin: 10px 0;">
+                            <strong style="font-size: 18px; color: #1976D2;">GCash: 09123456789</strong>
+                            <p style="margin: 5px 0; color: #666;">Account Name: LGU Business Permits Office</p>
+                            <p style="margin: 5px 0; color: #666;">Application Fee: ₱500.00</p>
+                        </div>
+                        <p style="color: #d32f2f; margin: 10px 0; font-size: 14px;">
+                            ⚠️ After sending payment, please upload a screenshot of your transaction below.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentProof">
+                            Proof of Payment * 
+                            <span style="color: #666; font-weight: normal; font-size: 14px;">(Screenshot of transaction)</span>
+                        </label>
+                        <input 
+                            type="file" 
+                            id="paymentProof" 
+                            name="payment_proof" 
+                            accept="image/*" 
+                            required 
+                            style="display: none;"
+                            onchange="handlePaymentProofUpload(this)">
+                        <button 
+                            type="button" 
+                            class="btn-secondary" 
+                            onclick="document.getElementById('paymentProof').click()"
+                            style="width: 100%; padding: 12px; margin-top: 5px;">
+                            Choose File
+                        </button>
+                        <div id="paymentProofStatus" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;">
+                            <span id="paymentProofText"></span>
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Accepted formats: JPG, PNG (Max 5MB)
+                        </small>
                     </div>
 
                     <div class="form-navigation">
@@ -160,63 +203,68 @@ $applications = $conn->query($apps_query);
                         The following documents are required for your application:
                     </p>
                     
+                    <div class="document-item" style="background: #e3f2fd; border-left: 4px solid #2196F3;">
+                        <label>1. Proof of Payment Transaction</label>
+                        <span style="color: #2196F3; font-weight: 500;">✓ (Already Uploaded)</span>
+                    </div>
+                    
                     <div class="document-item">
-                        <label>1. Application Form</label>
+                        <label>2. Application Form</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>2. Certificate of Registration</label>
+                        <label>3. Certificate of Registration</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>3. Barangay Business Clearance</label>
+                        <label>4. Barangay Business Clearance</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>4. Community Tax Certificate (CTC)</label>
+                        <label>5. Community Tax Certificate (CTC)</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>5. Contract of Lease / Title</label>
+                        <label>6. Contract of Lease / Title</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>6. Sketch/Pictures of Business Location</label>
+                        <label>7. Sketch/Pictures of Business Location</label>
                         <span style="color: #4caf50; font-weight: 500;">(Image File)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>7. Public Liability Insurance</label>
+                        <label>8. Public Liability Insurance</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>8. Locational/Zoning Clearance</label>
+                        <label>9. Locational/Zoning Clearance</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>9. Certificate of Occupancy</label>
+                        <label>10. Certificate of Occupancy</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>10. Building Permit & Electrical Cert.</label>
+                        <label>11. Building Permit & Electrical Cert.</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>11. Sanitary Permit</label>
+                        <label>12. Sanitary Permit</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 
                     <div class="document-item">
-                        <label>12. Fire Safety Inspection Permit</label>
+                        <label>13. Fire Safety Inspection Permit</label>
                         <span style="color: #4caf50; font-weight: 500;">(PDF Document)</span>
                     </div>
 

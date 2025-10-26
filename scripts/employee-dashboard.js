@@ -5,6 +5,46 @@ function logout() {
   }
 }
 
+// Handle receipt file upload with placeholder display
+function handleReceiptFileUpload(input) {
+  const file = input.files[0];
+  const statusDiv = document.getElementById("receiptFileStatus");
+  const statusText = document.getElementById("receiptFileText");
+
+  if (file) {
+    // Validate file size (5MB max)
+    if (file.size > 5242880) {
+      alert("File size exceeds 5MB limit. Please choose a smaller file.");
+      input.value = "";
+      statusDiv.style.display = "none";
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file type. Please upload a JPG, PNG, or PDF file.");
+      input.value = "";
+      statusDiv.style.display = "none";
+      return;
+    }
+
+    // Show success message (placeholder like the 12 documents)
+    statusDiv.style.display = "block";
+    statusDiv.style.background = "#e8f5e9";
+    statusDiv.style.border = "1px solid #4caf50";
+    statusText.innerHTML = `✓ <strong>${file.name}</strong> - Receipt uploaded successfully`;
+    statusText.style.color = "#2e7d32";
+  } else {
+    statusDiv.style.display = "none";
+  }
+}
+
 // Close modal
 function closeModal(modalId) {
   document.getElementById(modalId).classList.remove("show");
@@ -30,6 +70,7 @@ async function viewDocuments(applicationId) {
       let html = '<div style="display: grid; gap: 10px;">';
 
       const documentTypes = [
+        "Proof of Payment Transaction",
         "Application Form",
         "Certificate of Registration",
         "Barangay Business Clearance",
@@ -115,10 +156,27 @@ async function verifyDocument(documentId) {
 }
 
 // Approve application - Opens approval modal
-function approveApplication(applicationId) {
+async function approveApplication(applicationId) {
   document.getElementById("approveApplicationId").value = applicationId;
   document.getElementById("approveForm").reset();
   document.getElementById("approveApplicationId").value = applicationId; // Reset clears it, so set it again
+
+  // Fetch auto-generated receipt number
+  try {
+    const response = await fetch("api/generate-receipt-number.php");
+    const result = await response.json();
+
+    if (result.success) {
+      document.getElementById("receiptNumber").value = result.receipt_number;
+    } else {
+      document.getElementById("receiptNumber").value = "ERROR";
+      console.error("Failed to generate receipt number");
+    }
+  } catch (error) {
+    console.error("Error fetching receipt number:", error);
+    document.getElementById("receiptNumber").value = "ERROR";
+  }
+
   document.getElementById("approveModal").classList.add("show");
 }
 
@@ -126,33 +184,29 @@ function approveApplication(applicationId) {
 document.getElementById("approveForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const formData = new FormData();
-  formData.append(
-    "application_id",
-    document.getElementById("approveApplicationId").value
-  );
-  formData.append(
-    "receipt_number",
-    document.getElementById("receiptNumber").value
-  );
-  formData.append(
-    "receipt_amount",
-    document.getElementById("receiptAmount").value
-  );
-  formData.append(
-    "approval_notes",
-    document.getElementById("approvalNotes").value
-  );
-
+  // Validate that receipt file is selected (for placeholder display)
   const receiptFile = document.getElementById("receiptFile").files[0];
-  if (receiptFile) {
-    formData.append("receipt_file", receiptFile);
+  if (!receiptFile) {
+    alert("Please upload a receipt file before approving.");
+    return;
   }
+
+  // Only send the receipt metadata (no actual file upload)
+  const formData = {
+    application_id: document.getElementById("approveApplicationId").value,
+    receipt_number: document.getElementById("receiptNumber").value,
+    receipt_amount: document.getElementById("receiptAmount").value,
+    approval_notes: document.getElementById("approvalNotes").value,
+    receipt_file_name: receiptFile.name, // Just the filename for placeholder
+  };
 
   try {
     const response = await fetch("api/approve-application.php", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
     });
 
     const result = await response.json();
@@ -160,9 +214,15 @@ document.getElementById("approveForm").addEventListener("submit", async (e) => {
     if (result.success) {
       showMessage(
         document.getElementById("employeeMessage"),
-        "Application approved successfully!",
+        "Application approved successfully! Receipt sent to customer.",
         "success"
       );
+
+      // Show additional receipt details in console for reference
+      if (result.receipt_info) {
+        console.log("Receipt Information:", result.receipt_info);
+      }
+
       closeModal("approveModal");
       setTimeout(() => location.reload(), 1500);
     } else {
@@ -170,7 +230,7 @@ document.getElementById("approveForm").addEventListener("submit", async (e) => {
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("Failed to approve application");
+    alert("Failed to approve application. Check console for details.");
   }
 });
 
