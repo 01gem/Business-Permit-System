@@ -202,16 +202,30 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
     const submitButton = form.querySelector("button[type=submit]");
 
     submitButton.disabled = true;
     submitButton.textContent = "Submitting...";
 
     try {
+      // Get form data as JSON (placeholder system - no actual file upload)
+      const formData = {
+        application_type: document.getElementById("applicationType").value,
+        business_name: document.getElementById("businessName").value,
+        business_address: document.getElementById("businessAddress").value,
+        business_type: document.getElementById("businessType").value,
+        payment_proof_filename:
+          document.getElementById("paymentProof").files[0]?.name || "",
+        application_form_filename:
+          document.getElementById("applicationFormUpload").files[0]?.name || "",
+      };
+
       const response = await fetch("api/submit-full-application.php", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
       // Check if response is OK

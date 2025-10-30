@@ -3,6 +3,9 @@ require_once '../config.php';
 
 header('Content-Type: application/json');
 
+// Get JSON input instead of FormData
+$input = json_decode(file_get_contents('php://input'), true);
+
 // 1. Check user authorization
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'customer') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -11,56 +14,23 @@ if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'customer') {
 
 $customer_id = $_SESSION['user_id'];
 
-// 2. Validate required POST data
+// 2. Validate required data
 $required_fields = ['application_type', 'business_name', 'business_address', 'business_type'];
 foreach ($required_fields as $field) {
-    if (!isset($_POST[$field]) || empty($_POST[$field])) {
+    if (!isset($input[$field]) || empty($input[$field])) {
         echo json_encode(['success' => false, 'message' => "Error: Missing required field - $field"]);
         exit;
     }
 }
 
-// 2.5. Validate and handle payment proof upload
-if (!isset($_FILES['payment_proof']) || $_FILES['payment_proof']['error'] !== UPLOAD_ERR_OK) {
+// 2.5. Validate payment proof placeholder (no actual file upload)
+if (!isset($input['payment_proof_filename']) || empty($input['payment_proof_filename'])) {
     echo json_encode(['success' => false, 'message' => 'Payment proof is required']);
     exit;
 }
 
-$payment_proof_path = null;
-$upload_dir = '../uploads/payment_proofs/';
-
-// Create directory if it doesn't exist
-if (!file_exists($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
-}
-
-$file_tmp = $_FILES['payment_proof']['tmp_name'];
-$file_name = $_FILES['payment_proof']['name'];
-$file_size = $_FILES['payment_proof']['size'];
-$file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-
-// Validate file
-$allowed_extensions = ['jpg', 'jpeg', 'png'];
-if (!in_array($file_ext, $allowed_extensions)) {
-    echo json_encode(['success' => false, 'message' => 'Invalid file format. Only JPG and PNG are allowed']);
-    exit;
-}
-
-if ($file_size > 5242880) { // 5MB limit
-    echo json_encode(['success' => false, 'message' => 'File size exceeds 5MB limit']);
-    exit;
-}
-
-// Generate unique filename
-$new_filename = 'payment_' . $customer_id . '_' . time() . '.' . $file_ext;
-$upload_path = $upload_dir . $new_filename;
-
-if (!move_uploaded_file($file_tmp, $upload_path)) {
-    echo json_encode(['success' => false, 'message' => 'Failed to upload payment proof']);
-    exit;
-}
-
-$payment_proof_path = 'uploads/payment_proofs/' . $new_filename;
+// Store only the placeholder filename (no actual file)
+$payment_proof_path = 'payment_proof_' . $customer_id . '_' . time() . '.png';
 
 // 3. Start a database transaction
 $conn->autocommit(FALSE);
@@ -68,7 +38,7 @@ $conn->autocommit(FALSE);
 try {
     // 4. Insert application details into the 'applications' table
     $stmt = $conn->prepare("INSERT INTO applications (customer_id, application_type, business_name, business_address, business_type, payment_proof, status, application_date) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', NOW())");
-    $stmt->bind_param("isssss", $customer_id, $_POST['application_type'], $_POST['business_name'], $_POST['business_address'], $_POST['business_type'], $payment_proof_path);
+    $stmt->bind_param("isssss", $customer_id, $input['application_type'], $input['business_name'], $input['business_address'], $input['business_type'], $payment_proof_path);
     
     if (!$stmt->execute()) {
         throw new Exception('Failed to create application record: ' . $stmt->error);
