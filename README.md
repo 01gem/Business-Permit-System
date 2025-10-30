@@ -1,99 +1,121 @@
-# Business Permit Application and Renewal System
+# Business Permit System
 
-Description
------------
-A simple PHP/MySQL web application for managing business permit applications and renewals. Built as a school project to demonstrate CRUD operations, forms, session-based auth, and basic client-side interactivity.
+A lightweight web application for managing business permit applications, reviews, and approvals. Built primarily with PHP, JavaScript, HTML, and CSS.
 
-Purpose
--------
-School-use only: this repository contains unhashed (plain-text) passwords in the example data for demonstration/grading. DO NOT deploy to production or public environments.
+## Tech Stack
 
-Important security note
------------------------
-- This project uses plain-text passwords in its examples/seed data. This is insecure.
-- Do not use the bundled data in any live environment.
-- If you continue development, migrate immediately to secure password storage (password_hash / password_verify), prepared statements, HTTPS, CSRF protection, and other standard hardening steps.
+- PHP (server-side)
+- JavaScript (client-side)
+- HTML/CSS (UI)
 
-Quick setup (short)
--------------------
-1. Clone:
+Language composition:
+- PHP — 53.8%
+- JavaScript — 26.9%
+- CSS — 13.2%
+- HTML — 6.1%
+
+## Features
+
+- User authentication (login) via a dedicated auth page
+- Role-based dashboards:
+  - Customer Dashboard (`customer-dashboard.php`) for applicants
+  - Employee Dashboard (`employee-dashboard.php`) for staff
+- Configurable database connection (`config.php`)
+- SQL schema for quick setup (`business_permit_system.sql`)
+- Organized static assets (`styles/`, `scripts/`, `icon/`)
+- API scaffolding for backend operations (`api/`)
+
+## Project Structure
+
 ```
-git clone https://github.com/01gem/Business-Permit-System.git
-cd Business-Permit-System
-```
-2. Create DB and import seed SQL if available:
-```
-mysql -u root -p business_permits < database/seed.sql
-```
-3. Configure DB credentials in config.php (or app/config.php).
-4. Serve with PHP built-in server for local testing:
-```
-php -S localhost:8000 -t public
-```
-
-Hardening (must-do before any non-school use)
----------------------------------------------
-- Hash passwords with password_hash() and verify with password_verify().
-- Use prepared statements (PDO recommended).
-- Serve over HTTPS, enable secure session cookies, add CSRF protection, input validation/escaping, and rate limiting.
-- Remove or replace seeded plain-text credentials.
-
-Receipt feature — brief setup (major update)
---------------------------------------------
-Overview
-- Employees must now provide receipt information when approving applications. Receipt data is required for renewals.
-
-DB changes
-- Add columns to `applications`:
-  - `receipt_number` VARCHAR(100)
-  - `receipt_amount` DECIMAL(10,2)
-  - `receipt_file` VARCHAR(255)
-
-Quick migration
-- Run provided migration or execute:
-```sql
-ALTER TABLE `applications`
-ADD COLUMN `receipt_number` VARCHAR(100) DEFAULT NULL AFTER `permit_number`,
-ADD COLUMN `receipt_amount` DECIMAL(10,2) DEFAULT NULL AFTER `receipt_number`,
-ADD COLUMN `receipt_file` VARCHAR(255) DEFAULT NULL AFTER `receipt_amount`;
+.
+├─ README.md
+├─ index.html                 # Landing page
+├─ auth.html                  # Login/authentication page
+├─ config.php                 # Database configuration
+├─ customer-dashboard.php     # Customer-facing dashboard
+├─ employee-dashboard.php     # Employee/staff dashboard
+├─ business_permit_system.sql # Database schema
+├─ api/                       # API endpoints (PHP)
+├─ styles/                    # CSS assets
+├─ scripts/                   # JavaScript assets
+└─ icon/                      # Icons and images
 ```
 
-Files changed (high level)
-- employee-dashboard.php: approval modal now collects receipt number, amount, file (PDF/JPG/PNG, ≤5MB), and optional notes.
-- scripts/employee-dashboard.js: approveApplication() opens modal and submits FormData for file upload.
-- api/approve-application.php: accepts multipart/form-data, validates file type/size, stores file in uploads/receipts/, saves receipt data in DB, and cleans up on failure.
+## Getting Started
 
-Upload directory
-- Location: `uploads/receipts/`
-- Create manually or allow the API to create it:
-```
-mkdir -p uploads/receipts
-chmod 755 uploads/receipts
-```
-- Naming: `receipt_{application_id}_{timestamp}.{ext}`
+### Prerequisites
 
-Security checks for receipts
-- Accept only PDF, JPG, JPEG, PNG
-- Max file size 5MB
-- Ensure employee authentication for approval endpoints
-- Use unique filenames and delete uploaded files if DB insert fails
+- PHP 8.x or newer
+- MySQL or MariaDB
+- A web server (Apache/Nginx) or PHP built-in server
 
-Errors & troubleshooting (short)
-- Check PHP error logs, browser console, DB credentials in config.php, and file permissions for `uploads/`.
+### Installation
 
-Future ideas
-- Customer receipt viewing/download, email copies, verification workflow, and audit history.
+1. Clone the repository
+   ```
+   git clone https://github.com/01gem/Business-Permit-System.git
+   cd Business-Permit-System
+   ```
 
-Contributing / Updating README
-------------------------------
-Create a branch, update README.md with this content, commit, and open a PR for review:
-```
-git checkout -b docs/update-readme
-git add README.md
-git commit -m "docs: update README with receipt feature brief and security notice"
-git push --set-upstream origin docs/update-readme
-```
+2. Create the database and import the schema
+   - Create a database (e.g., `business_permit_system`)
+   - Import `business_permit_system.sql` using your SQL client or:
+     ```
+     mysql -u <user> -p <database_name> < business_permit_system.sql
+     ```
 
-License
--------
-Include a license if required by your school, otherwise leave unspecified for class submissions.
+3. Configure database credentials
+   - Open `config.php`
+   - Update the host, database name, username, and password to match your environment
+
+4. Run the application
+   - Using PHP built-in server (for local development):
+     ```
+     php -S localhost:8000
+     ```
+     Then open http://localhost:8000 in your browser.
+   - Or configure your web server’s document root to this repository.
+
+## Usage
+
+- Start at `index.html` or go directly to `auth.html` to log in.
+- After authentication:
+  - Customers are redirected to `customer-dashboard.php`
+  - Employees are redirected to `employee-dashboard.php`
+- Ensure you have corresponding user records in the database to authenticate successfully.
+
+## API
+
+The `api/` directory contains server-side endpoints that power dashboard operations. Refer to the PHP files inside `api/` for available routes and request/response formats.
+
+## Configuration
+
+- `config.php` centralizes database connection details.
+- For production, ensure sensitive credentials are secured and not exposed publicly.
+
+## Development Notes
+
+- Place custom CSS in `styles/`
+- Place custom JS in `scripts/`
+- Add images/icons to `icon/`
+- Follow the existing file naming and directory structure for consistency.
+
+## Changelog
+
+2025-10-26
+- Added `auth.html` for user authentication
+- Introduced role-based dashboards: `customer-dashboard.php`, `employee-dashboard.php`
+- Added initial database schema: `business_permit_system.sql`
+- Centralized database configuration via `config.php`
+- Created asset directories: `styles/`, `scripts/`, `icon/`
+- Added landing page: `index.html`
+- Established `api/` directory for backend endpoints
+
+## License
+
+No license specified. If you plan to distribute or modify this project, consider adding a license file.
+
+## Maintainer
+
+- [01gem](https://github.com/01gem)
