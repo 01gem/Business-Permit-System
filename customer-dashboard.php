@@ -3,7 +3,7 @@ require_once 'config.php';
 
 // Check if user is logged in and is a customer
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'customer') {
-    header('Location: index.html');
+    header('Location: index.php');
     exit;
 }
 
@@ -22,7 +22,8 @@ $applications = $conn->query($apps_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Business Permit System</title>
     <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg">
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
     <div class="container dashboard">

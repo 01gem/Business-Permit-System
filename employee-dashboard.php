@@ -3,7 +3,7 @@ require_once 'config.php';
 
 // Check if user is logged in and is an employee
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'employee') {
-    header('Location: index.html');
+    header('Location: index.php');
     exit;
 }
 
@@ -36,7 +36,8 @@ $stats = $stats_result->fetch_assoc();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Dashboard - Business Permit System</title>
     <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg">
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
     <div class="container dashboard">

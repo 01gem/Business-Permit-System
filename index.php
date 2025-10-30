@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to the Philippine Business Permit System</title>
     <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg" />
-    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/landing.css" />
   </head>
   <body>
     <div class="landing-container">
@@ -15,7 +16,7 @@
           Streamlined digital platform for business permit applications and
           renewals
         </p>
-        <a href="auth.html" class="btn-primary btn-get-started"
+        <a href="auth.php" class="btn-primary btn-get-started"
           >Get Started &rarr;</a
         >
       </header>

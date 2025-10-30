@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Business Permit System - Login</title>
     <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg" />
-    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/auth.css" />
   </head>
   <body>
     <div class="container">
