@@ -338,3 +338,22 @@ function downloadReceipt(applicationId, receiptNumber) {
   );
   console.log("Receipt download requested for Application ID:", applicationId);
 }
+
+// Download application form template (placeholder - similar to other downloads)
+function downloadApplicationFormTemplate() {
+  // Placeholder message similar to the receipt system
+  alert(
+    "📄 Application Form Template Download\n\n" +
+      "Document: Business Permit Application Form\n" +
+      "Format: PDF\n\n" +
+      "✓ The official application form template is ready.\n" +
+      "This is a placeholder for the template download feature.\n\n" +
+      "The form includes:\n" +
+      "- Complete business information fields\n" +
+      "- Document checklist\n" +
+      "- Terms and conditions\n" +
+      "- Official LGU format\n\n" +
+      "(For presentation purposes - actual PDF download would be implemented here)"
+  );
+  console.log("Application form template download requested");
+}

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Business Permit System - Login</title>
+    <title>Business Permit System</title>
     <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg" />
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/auth.css" />

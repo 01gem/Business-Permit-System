@@ -64,6 +64,8 @@
 }
 
 .auth-form h2 {
+  display: flex;
+  justify-content: center;
   color: var(--text-light);
   margin-bottom: 20px;
   font-size: 24px;

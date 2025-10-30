@@ -135,7 +135,13 @@ $applications = $conn->query($apps_query);
                                 style="flex-grow: 1; padding: 12px;">
                                 Upload File Here
                             </button>
-                            <a href="uploads/application_form_template.pdf" download="Business_Permit_Application_Form.pdf" class="btn-action btn-view" style="text-decoration: none;">Download File</a>
+                            <button 
+                                type="button" 
+                                class="btn-action btn-view" 
+                                onclick="downloadApplicationFormTemplate()"
+                                style="text-decoration: none; white-space: nowrap;">
+                                Download File
+                            </button>
                         </div>
                         <input 
                             type="file" 
