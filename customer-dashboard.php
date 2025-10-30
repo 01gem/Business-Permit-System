@@ -11,6 +11,14 @@ $customer_id = $_SESSION['user_id'];
 $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 
+// Auto-expire permits that have passed their expiration date
+$expire_query = "UPDATE applications 
+                 SET status = 'EXPIRED' 
+                 WHERE status = 'RELEASED' 
+                 AND expiration_date IS NOT NULL 
+                 AND expiration_date < CURDATE()";
+$conn->query($expire_query);
+
 // Get customer's applications
 $apps_query = "SELECT * FROM applications WHERE customer_id = $customer_id ORDER BY application_date DESC";
 $applications = $conn->query($apps_query);

@@ -164,6 +164,11 @@ table tr:hover {
   color: var(--error);
 }
 
+.status-expired {
+  background: rgba(158, 158, 158, 0.2);
+  color: #757575;
+}
+
 .btn-action {
   padding: 8px 15px;
   border: none;

@@ -12,6 +12,14 @@ $first_name = $_SESSION['first_name'];
 $last_name = $_SESSION['last_name'];
 $position = $_SESSION['position'];
 
+// Auto-expire permits that have passed their expiration date
+$expire_query = "UPDATE applications 
+                 SET status = 'EXPIRED' 
+                 WHERE status = 'RELEASED' 
+                 AND expiration_date IS NOT NULL 
+                 AND expiration_date < CURDATE()";
+$conn->query($expire_query);
+
 // Get all applications
 $apps_query = "SELECT a.*, c.first_name as customer_fname, c.last_name as customer_lname, c.contact_number, c.email as customer_email
                FROM applications a 
@@ -24,7 +32,8 @@ $stats_query = "SELECT
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'PENDING' THEN 1 ELSE 0 END) as pending,
                 SUM(CASE WHEN status = 'APPROVED' THEN 1 ELSE 0 END) as approved,
-                SUM(CASE WHEN status = 'RELEASED' THEN 1 ELSE 0 END) as released
+                SUM(CASE WHEN status = 'RELEASED' THEN 1 ELSE 0 END) as released,
+                SUM(CASE WHEN status = 'EXPIRED' THEN 1 ELSE 0 END) as expired
                 FROM applications";
 $stats_result = $conn->query($stats_query);
 $stats = $stats_result->fetch_assoc();
@@ -73,6 +82,10 @@ $stats = $stats_result->fetch_assoc();
                 <div class="stat-card">
                     <h4>Released</h4>
                     <div class="stat-value"><?php echo $stats['released']; ?></div>
+                </div>
+                <div class="stat-card">
+                    <h4>Expired</h4>
+                    <div class="stat-value"><?php echo $stats['expired']; ?></div>
                 </div>
             </div>
 
