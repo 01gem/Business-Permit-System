@@ -38,11 +38,11 @@ window.onclick = function (event) {
   }
 };
 
-// Handle payment proof upload
-function handlePaymentProofUpload(input) {
+// Handle generic file upload with placeholder text
+function handleFileUpload(input, statusId, textId) {
   const file = input.files[0];
-  const statusDiv = document.getElementById("paymentProofStatus");
-  const statusText = document.getElementById("paymentProofText");
+  const statusDiv = document.getElementById(statusId);
+  const statusText = document.getElementById(textId);
 
   if (file) {
     // Validate file size (5MB max)
@@ -53,20 +53,24 @@ function handlePaymentProofUpload(input) {
       return;
     }
 
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    // Validate file type (images and PDFs)
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      alert("Invalid file type. Please upload a JPG or PNG image.");
+      alert("Invalid file type. Please upload a JPG, PNG, or PDF file.");
       input.value = "";
       statusDiv.style.display = "none";
       return;
     }
 
-    // Show success message (similar to document placeholder)
     statusDiv.style.display = "block";
     statusDiv.style.background = "#e8f5e9";
     statusDiv.style.border = "1px solid #4caf50";
-    statusText.innerHTML = `✓ <strong>${file.name}</strong> - Payment proof uploaded successfully`;
+    statusText.innerHTML = `✓ <strong>${file.name}</strong> - File selected successfully.`;
     statusText.style.color = "#2e7d32";
   } else {
     statusDiv.style.display = "none";
@@ -81,9 +85,16 @@ document.getElementById("nextButton").addEventListener("click", function () {
     .value.trim();
   const businessType = document.getElementById("businessType").value;
   const paymentProof = document.getElementById("paymentProof").files[0];
+  const applicationFormFile = document.getElementById("applicationFormUpload")
+    .files[0];
 
   if (!businessName || !businessAddress || !businessType) {
     alert("Please fill out all business details before proceeding.");
+    return;
+  }
+
+  if (!applicationFormFile) {
+    alert("Please upload the Application Form before proceeding.");
     return;
   }
 
@@ -92,9 +103,92 @@ document.getElementById("nextButton").addEventListener("click", function () {
     return;
   }
 
+  // Generate dynamic document requirements for Step 2
+  generateDocumentRequirements(businessType);
+
   document.getElementById("form-step-1").classList.remove("active");
   document.getElementById("form-step-2").classList.add("active");
 });
+
+// Generate document requirements for Step 2 based on business type
+function generateDocumentRequirements(businessType) {
+  const container = document.getElementById("document-requirements");
+  container.innerHTML = ""; // Clear previous requirements
+
+  let requirements = [];
+
+  // Business-type specific documents
+  switch (businessType) {
+    case "Sole Proprietorship":
+      requirements.push({
+        name: "dti_cert",
+        label: "Department of Trade and Industry (DTI) Certificate",
+      });
+      break;
+    case "Partnership":
+    case "Corporation":
+      requirements.push({
+        name: "sec_cert",
+        label: "Securities and Exchange Commission (SEC) Certificate",
+      });
+      requirements.push({
+        name: "articles_inc",
+        label: "Articles of Incorporation/Partnership",
+      });
+      break;
+    case "Cooperative":
+      requirements.push({
+        name: "cda_cert",
+        label: "Cooperative Development Authority (CDA) Certificate",
+      });
+      break;
+  }
+
+  // Static documents for all types
+  const staticRequirements = [
+    { name: "public_liability_insurance", label: "Public Liability Insurance" },
+    { name: "barangay_clearance", label: "Barangay Business Clearance" },
+    {
+      name: "proof_of_address",
+      label: "Proof of Business Address (Lease Contract or Title)",
+    },
+    { name: "locational_clearance", label: "Locational/Zoning Clearance" },
+    { name: "occupancy_permit", label: "Occupancy Permit" },
+  ];
+
+  requirements = requirements.concat(staticRequirements);
+
+  // Create HTML for each requirement
+  requirements.forEach((req) => {
+    const docId = `doc_${req.name}`;
+    const statusId = `status_${req.name}`;
+    const textId = `text_${req.name}`;
+
+    const item = document.createElement("div");
+    item.className = "form-group document-upload-item";
+    item.innerHTML = `
+            <label for="${docId}">${req.label}</label>
+            <input 
+                type="file" 
+                id="${docId}" 
+                name="${req.name}" 
+                accept=".pdf,image/*" 
+                required 
+                style="display: none;"
+                onchange="handleFileUpload(this, '${statusId}', '${textId}')">
+            <button 
+                type="button" 
+                class="btn-secondary" 
+                onclick="document.getElementById('${docId}').click()">
+                Upload File
+            </button>
+            <div id="${statusId}" class="file-status-box">
+                <span id="${textId}"></span>
+            </div>
+        `;
+    container.appendChild(item);
+  });
+}
 
 // Back button handler
 document.getElementById("backButton").addEventListener("click", function () {
