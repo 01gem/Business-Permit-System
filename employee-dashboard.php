@@ -3,7 +3,7 @@ require_once 'config.php';
 
 // Check if user is logged in and is an employee
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'employee') {
-    header('Location: index.php');
+    header('Location: index.html');
     exit;
 }
 

@@ -3,7 +3,7 @@ require_once 'config.php';
 
 // Check if user is logged in and is a customer
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'customer') {
-    header('Location: index.php');
+    header('Location: index.html');
     exit;
 }
 
