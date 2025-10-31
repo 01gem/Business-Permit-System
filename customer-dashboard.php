@@ -32,7 +32,7 @@ $applications = $conn->query($apps_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Business Permit System</title>
-    <link rel="icon" type="image/svg+xml" href="icon/briefcase.svg">
+    <link rel="icon" type="image/svg+xml" href="images/briefcase.svg">
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/dashboard.css">
 </head>
@@ -195,10 +195,13 @@ $applications = $conn->query($apps_query);
                     <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196F3;">
                         <h5 style="margin-top: 0; color: #1976D2;">📱 Application Fee Payment</h5>
                         <p style="color: #555; margin: 10px 0;">Please send the application fee to the following number:</p>
-                        <div style="background: white; padding: 15px; border-radius: 6px; margin: 10px 0;">
-                            <strong style="font-size: 18px; color: #1976D2;">GCash: 09123456789</strong>
-                            <p style="margin: 5px 0; color: #666;">Account Name: LGU Business Permits Office</p>
-                            <p style="margin: 5px 0; color: #666;">Application Fee: ₱5,000.00</p>
+                        <div style="background: white; padding: 15px; border-radius: 6px; margin: 10px 0; position: relative; overflow: hidden;">
+                            <img src="images/cash-g.jpg" alt="GCash" style="position: absolute; top: 50%; left: 65%; transform: translate(-50%, -50%); width: 200px; height: 200px; object-fit: contain; opacity: 0.5; z-index: 1;">
+                            <div style="position: relative; z-index: 2;">
+                                <strong style="font-size: 18px; color: #1976D2;">GCash: 09123456789</strong>
+                                <p style="margin: 5px 0; color: #666;">Account Name: LGU Business Permits Office</p>
+                                <p style="margin: 5px 0; color: #666;">Application Fee: ₱5,000.00</p>
+                            </div>
                         </div>
                         <p style="color: #d32f2f; margin: 10px 0; font-size: 14px;">
                             ⚠️ After sending payment, please upload a screenshot of your transaction below.
