@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles/auth.css" />
   </head>
   <body>
+    <img src="images/img3.jpg" alt="Background Image" class="background-image" />
     <div class="container">
       <div class="auth-wrapper">
         <div class="auth-box">

@@ -43,7 +43,7 @@ $stats = $stats_result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard - Business Permit System</title>
+    <title>Business Permit System</title>
     <link rel="icon" type="image/svg+xml" href="images/briefcase.svg">
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/dashboard.css">
