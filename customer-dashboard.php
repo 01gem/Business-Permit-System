@@ -16,8 +16,11 @@ $expire_query = "UPDATE applications
                  SET status = 'EXPIRED' 
                  WHERE status = 'RELEASED' 
                  AND expiration_date IS NOT NULL 
-                 AND expiration_date < CURDATE()";
-$conn->query($expire_query);
+                 AND DATE(expiration_date) < CURDATE()";
+$expire_result = $conn->query($expire_query);
+
+// Debug: Check if any rows were updated (you can remove this later)
+// echo "<!-- Expired rows updated: " . $conn->affected_rows . " -->";
 
 // Get customer's applications
 $apps_query = "SELECT * FROM applications WHERE customer_id = $customer_id ORDER BY application_date DESC";
@@ -155,7 +158,7 @@ $applications = $conn->query($apps_query);
                             type="file" 
                             id="applicationFormUpload" 
                             name="application_form_file" 
-                            accept=".pdf,.doc,.docx" 
+                            accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" 
                             required 
                             style="display: none;"
                             onchange="handleFileUpload(this, 'applicationFormStatus', 'applicationFormText')">

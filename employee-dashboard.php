@@ -17,8 +17,8 @@ $expire_query = "UPDATE applications
                  SET status = 'EXPIRED' 
                  WHERE status = 'RELEASED' 
                  AND expiration_date IS NOT NULL 
-                 AND expiration_date < CURDATE()";
-$conn->query($expire_query);
+                 AND DATE(expiration_date) < CURDATE()";
+$expire_result = $conn->query($expire_query);
 
 // Get all applications
 $apps_query = "SELECT a.*, c.first_name as customer_fname, c.last_name as customer_lname, c.contact_number, c.email as customer_email

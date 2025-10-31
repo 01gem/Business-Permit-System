@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `applications` (
   `business_address` text NOT NULL,
   `business_type` varchar(100) NOT NULL,
   `payment_proof` varchar(255) DEFAULT NULL,
-  `status` enum('PENDING','FOR_REVISION','APPROVED','RELEASED') DEFAULT 'PENDING',
+  `status` enum('PENDING','FOR_REVISION','APPROVED','RELEASED','EXPIRED') DEFAULT 'PENDING',
   `application_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `approval_date` timestamp NULL DEFAULT NULL,
   `release_date` timestamp NULL DEFAULT NULL,
